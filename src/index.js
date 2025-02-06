@@ -1,5 +1,4 @@
 import express from 'express';  
-import path from 'path';
 import productsRoutes from './routes/products.route.js';
 import cartRoutes from './routes/cart.route.js';  
 

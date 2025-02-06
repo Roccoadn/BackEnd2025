@@ -1,6 +1,6 @@
 import fs from 'fs';
 import path from 'path';
-import { productManager } from './product.manager.js';
+import { productManager } from './products.manager.js';
 
 class CartManager {
     constructor(path) {
@@ -68,4 +68,4 @@ class CartManager {
     }
 }
 
-export const cartManager = new cartManager(path.join(process.cwd(), '../data/carrito.json'));
+export const cartManager = new CartManager(path.join(process.cwd(), 'src/data/carrito.json'));

@@ -1,9 +1,9 @@
 import { Router } from "express";  
-import { cartManager } from "../managers/cart.manager"; 
+import { cartManager } from "../managers/cart.manager.js"; 
 
 const route = Router(); 
 
-router.post('/', async (req, res) => {
+route.post('/', async (req, res) => {
     try {
         res.json(await cartManager.createCart());
     } catch (error) {
@@ -11,7 +11,7 @@ router.post('/', async (req, res) => {
     }
 });
 
-router.get ('/:cartId', async (req, res) => {
+route.get ('/:cartId', async (req, res) => {
     try {
         const cart = await cartManager.getCartById(req.params.cartId);
         if (!cart) {
@@ -24,7 +24,7 @@ router.get ('/:cartId', async (req, res) => {
     }
 });
 
-router.post('/:cartId/products/:productId', async (req, res) => {
+route.post('/:cartId/products/:productId', async (req, res) => {
     try {
         res.json(await cartManager.saveProdToCart(req.params.cartId, req.params.productId));
     } catch (error) {

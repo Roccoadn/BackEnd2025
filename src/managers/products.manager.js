@@ -1,6 +1,5 @@
 import fs from 'fs';
 import path from 'path';
-import uuid from 'uuid';
 
 class ProductManager {
     constructor(path) {
@@ -19,7 +18,8 @@ class ProductManager {
     async getProductById(productId) {
         try { 
             const products = await this.getAllProducts();
-            const product = products.find(p => p.id === productId);
+            const id = Number(productId);
+            const product = products.find(p => p.id === id);
             if (!product) throw new Error('Product not found');
             return product;
         }  catch (error) {
@@ -38,23 +38,35 @@ class ProductManager {
         const newProduct = { id, title, description, code, price, status, stock, category, thumbnails };
         products.push(newProduct);
 
-        await fs.promises.writeFile(this.filePath, JSON.stringify(products, null, 2));
+        await fs.promises.writeFile(this.path, JSON.stringify(products, null, 2));
         return newProduct;
     }
 
     async updateProduct(productId, product) {
         try {
             const products = await this.getAllProducts();
-            let prod = await this.getProductById(productId);
-            prod = { ...prod, ...product };
-            const newArray = products.filter((prod) => prod.id / id);
-            newArray.push(prod);
-            await fs.promises.writeFile(this.path, JSON.stringify(newArray, null, 2));  
-            return prod;
+            console.log("Lista de productos antes de actualizar:", products);
+
+            const id = Number(productId);
+            console.log("ID recibido:", id);
+
+            const i = products.findIndex(p => p.id === id);
+            console.log("Índice encontrado:", i);
+    
+            if (i === -1) {
+                throw new Error('Product not found');
+            }
+
+            products[i] = { ...products[i], ...product };
+    
+            await fs.promises.writeFile(this.path, JSON.stringify(products, null, 2));
+    
+            return products[i];
         } catch (error) {
-            throw new Error('Failed to update product');
+            throw new Error(`Failed to update product: ${error.message}`);
         }
     }
+    
 
     async deleteProduct(productId) {
         try {
@@ -80,4 +92,4 @@ class ProductManager {
     }
 }
 
-export const productManager = new ProductManager(path.join(process.cwd(), '../data/products.json'));
+export const productManager = new ProductManager(path.join(process.cwd(), 'src/data/productos.json'));

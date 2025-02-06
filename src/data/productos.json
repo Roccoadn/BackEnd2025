@@ -1,0 +1,41 @@
+[
+  {
+    "id": 1,
+    "title": "Mouse Gamer",
+    "description": "RGB, 16000 DPI",
+    "code": "MOUSE123",
+    "price": 49.99,
+    "status": true,
+    "stock": 25,
+    "category": "Perifericos",
+    "thumbnails": [
+      "img-mouse.jpg"
+    ]
+  },
+  {
+    "id": 2,
+    "title": "Teclado",
+    "description": "RGB, mecanico",
+    "code": "TECLADO123",
+    "price": 70.5,
+    "status": true,
+    "stock": 20,
+    "category": "Perifericos",
+    "thumbnails": [
+      "img-teclado.jpg"
+    ]
+  },
+  {
+    "id": 3,
+    "title": "Teclado Mecanico RGB (titulo cambiado)",
+    "description": "144hz",
+    "code": "MONITOR123",
+    "price": 249.99,
+    "status": true,
+    "stock": 5,
+    "category": "Accessories",
+    "thumbnails": [
+      "img-monitor.jpg"
+    ]
+  }
+]

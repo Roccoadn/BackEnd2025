@@ -1,7 +1,7 @@
 import { Router } from "express";  
-import { productManager } from "../managers/product.manager";
+import { productManager } from "../managers/products.manager.js";
 
-const route = Router(); 
+const router = Router(); 
 
 router.delete('/:productId', async (req, res) => {
     try {
@@ -32,8 +32,9 @@ router.post('/', async (req, res) => {
 
 router.put ('/:productId', async (req, res) => {
 try {
-    const product = await productManager.updateProduct(req.params.productId, req.body);
-    res.status(200).json(product);
+    const { productId } = req.params;
+    const updatedProduct = await productManager.updateProduct(productId, req.body);
+    res.status(200).json(updatedProduct);
 } catch (error) {
         res.status(400).json({ error: error.message });
     }
@@ -41,8 +42,9 @@ try {
 
 router.get('/:productId', async (req, res) => {
     try {
-        const product = await productManager.getProductById(req.params.productId);
-        res.status(200).json(product);
+        const { id } = req.params;
+        const product = await productManager.getProductById(id);
+        res.json(product);
     } catch (error) {
         res.status(404).json({ error: error.message });
     }
@@ -50,7 +52,8 @@ router.get('/:productId', async (req, res) => {
 
 router.get('/', async (req, res) => {
     try {
-        const products = await productManager.getAllProducts();
+        const { limit } = req.query;
+        const products = await productManager.getAllProducts(limit);
         res.status(200).json(products);
     } catch (error) {
         res.status(400).json({ error: error.message });
@@ -59,4 +62,4 @@ router.get('/', async (req, res) => {
 
 
 
-export default route;
+export default router;
