@@ -45,13 +45,10 @@ class ProductManager {
     async updateProduct(productId, product) {
         try {
             const products = await this.getAllProducts();
-            console.log("Lista de productos antes de actualizar:", products);
 
             const id = Number(productId);
-            console.log("ID recibido:", id);
 
             const i = products.findIndex(p => p.id === id);
-            console.log("Índice encontrado:", i);
     
             if (i === -1) {
                 throw new Error('Product not found');
