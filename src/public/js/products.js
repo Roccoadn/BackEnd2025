@@ -5,7 +5,7 @@ fetch('http://localhost:8080/api/products')
         res.forEach(product => {
         const div = document.createElement('div')
         div.innerHTML = `
-            <p>${product.title}</p>
+            <h1>${product.title}</h1>
             <p>${product.description}</p>
             <h2>${product.price}</h2>
         `
