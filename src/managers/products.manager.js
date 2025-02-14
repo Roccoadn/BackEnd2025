@@ -1,5 +1,6 @@
 import fs from 'fs';
 import path from 'path';
+import __dirname from '../utils.js';
 
 class ProductManager {
     constructor(path) {
@@ -88,5 +89,7 @@ class ProductManager {
 
     }
 }
+export const productManager = new ProductManager(path.resolve(__dirname, '../data/products.json'));
+export default ProductManager;
 
-export const productManager = new ProductManager(path.join(process.cwd(), 'src/data/productos.json'));
+    
