@@ -1,0 +1,33 @@
+<h2>holaaaaaaaaaaaaaaa</h2>
+<div id="formsContainer">
+    <div id="containerAddProduct">
+        <hr>
+    <form action="http://localhost:8080/api/products" method="POST">
+        <label for="productTitle">Nombre del producto</label>
+        <input type="text" id="productTitle" name="productTitle" required><br><br>
+
+        <label for="description">Descripcion del producto</label>
+        <textarea id="description" name="description" rows="1" required></textarea><br><br>
+        
+        <label for="price">Precio del producto</label>
+        <input type="number" id="price" name="price" required><br><br>
+
+        <button id="addProduct" type="submit">Postear</button>
+    </form>
+    </div>
+    <hr>
+    <div id="containerDeleteProductById">
+    <form action="http://localhost:8080/api/products" method="DELETE">
+        <label for="id">Id del producto</label>
+        <input type="number" id="id" name="id" required><br><br>
+        <button id="deleteProductById" type="submit">Borrar</button>
+    </form>
+    <hr>
+    </div>
+<div id="products-container"></div>
+
+
+
+<script src="/socket.io/socket.io.js"></script>
+<script src="js/home.js"></script>
+<script src="js/products.js"></script>

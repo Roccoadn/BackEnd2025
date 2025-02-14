@@ -4,6 +4,7 @@ import __dirname from './utils.js';
 import productsRoutes from './routes/products.route.js';
 import viewsRouter from './routes/views.route.js';
 import handlebars from 'express-handlebars';
+import { productManager } from './managers/products.manager.js';
 import { Server } from 'socket.io';
 
 const app = express();
@@ -17,21 +18,20 @@ app.use (express.urlencoded({extended: true}));
 app.engine('handlebars', handlebars.engine())
 app.set('view engine', 'handlebars');
 app.set('views', path.resolve(__dirname + '/views'));
-app.use('/',viewsRouter);
-
 app.use ('/', viewsRouter);
 app.use ('/api/products/', productsRoutes);
 
+
 webSocketServer.on('connection', (socket) => {
-  console.log('Nuevo dispositivo conectado!, se conecto ->', socket.id)
-  socket.on('mensaje', (data)=>{
-      console.log('El cliente, con id ->', socket.id, 'Envia dicha data = ',data)
-      socket.emit('mensaje',{mensaje: 'Buenas cliente te devuelvo el saludo'})
-  })
+  console.log('Nuevo dispositivo conectado!, ID:', socket.id)
+  
+  socket.on('newProduct', (product) => {
+    productManager.addProduct(product);
+  });
 
-  socket.on('mensaje-a-los-demas',(data) => {
-      socket.broadcast.emit('saludos-a-todos', data)
-  })
+  socket.on('deleteProduct',  (productId) => {
+    productManager.deleteProduct(productId);
+    productManager.getAllProducts();
+  });
+});
 
-  webSocketServer.emit('bienvenida','Bienvenidos a todos los clientes!')
-})

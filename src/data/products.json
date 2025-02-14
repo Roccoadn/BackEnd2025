@@ -8,7 +8,9 @@
     "status": true,
     "stock": 25,
     "category": "Perifericos",
-    "thumbnails": ["img-mouse.jpg"]
+    "thumbnails": [
+      "img-mouse.jpg"
+    ]
   },
   {
     "id": 2,
@@ -19,7 +21,9 @@
     "status": true,
     "stock": 20,
     "category": "Perifericos",
-    "thumbnails": ["img-teclado.jpg"]
+    "thumbnails": [
+      "img-teclado.jpg"
+    ]
   },
   {
     "id": 3,
@@ -30,6 +34,8 @@
     "status": true,
     "stock": 5,
     "category": "Accessories",
-    "thumbnails": ["img-monitor.jpg"]
+    "thumbnails": [
+      "img-monitor.jpg"
+    ]
   }
 ]

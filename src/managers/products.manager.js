@@ -1,6 +1,5 @@
 import fs from 'node:fs';
 import path from 'path';
-import __dirname from '../utils.js';
 
 class ProductManager {
     constructor(path) {
@@ -30,15 +29,15 @@ class ProductManager {
         }
     }
 
-    async addProduct({ title, description, code, price, stock, category, thumbnails = [], status = true }) {
-        if (!title || !description || !code || !price || stock === undefined || !category) {
-            throw new Error('All fields except thumbnails are required.');
+    async addProduct({ title, description, price, status = true}) {
+        if (!title || !description || !price) {
+            throw new Error('All fields are required.');
         }
 
         const products = await this.getAllProducts();
         const id = products.length ? Math.max(...products.map(p => p.id)) + 1 : 1;
         
-        const newProduct = { id, title, description, code, price, status, stock, category, thumbnails };
+        const newProduct = { id, title, description, price, status, };
         products.push(newProduct);
 
         await fs.promises.writeFile(this.path, JSON.stringify(products, null, 2));
