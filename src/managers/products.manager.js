@@ -1,4 +1,4 @@
-import fs from 'fs';
+import fs from 'node:fs';
 import path from 'path';
 import __dirname from '../utils.js';
 
@@ -9,12 +9,14 @@ class ProductManager {
 
     async getAllProducts() {
         try {
-            const data = await fs.promises.readFile(this.path, 'utf-8');
-            return JSON.parse(data);
+          if (fs.existsSync(this.path)) {
+            const products = await fs.promises.readFile(this.path, "utf-8");
+            return JSON.parse(products);
+          } else return [];
         } catch (error) {
-            return [];
+          throw new Error(error.message);
         }
-    }
+      }
 
     async getProductById(productId) {
         try { 
@@ -68,11 +70,14 @@ class ProductManager {
 
     async deleteProduct(productId) {
         try {
-            const prod = await this.getProductById(productId);
+            const id = Number(productId);
             const products = await this.getAllProducts();
-            const newArray = products.filter((prod) => prod.id !== productId);
+            const newArray = products.filter((prod) => prod.id !== id);
+
+            if (newArray.length === products.length) throw new Error('Product not found');
+
             await fs.promises.writeFile(this.path, JSON.stringify(newArray, null, 2));
-            return prod;
+            return { message: 'Product deleted success' };
         } catch (error) {
             throw new Error('Failed to delete product');
         }
@@ -82,14 +87,13 @@ class ProductManager {
         try {
             const products = await this.getAllProducts();
             if (products.length === 0) throw new Error('No products found');
-            await fs.promises.writeFile.unlink(this.path);
+            await fs.promises.writeFile(this.path, JSON.stringify([], null, 2));
         } catch (error) {
-            throw new Error('Failed to delete product');
+            throw new Error('Failed to delete all products');
         }
-
     }
 }
-export const productManager = new ProductManager(path.resolve(__dirname, '../data/products.json'));
-export default ProductManager;
+export const productManager = new ProductManager(path.join(process.cwd(), "src/data/products.json"));
+
 
     
