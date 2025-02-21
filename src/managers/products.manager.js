@@ -29,15 +29,18 @@ class ProductManager {
         }
     }
 
-    async addProduct({ title, description, price, status = true}) {
+    async addProduct({title, description, price, stock, code, thumbnails, status = true}) {
         if (!title || !description || !price) {
-            throw new Error('All fields are required.');
+            console.log(title)
+            console.log(description)
+            console.log(price)
+            throw new Error('Te falto el titulo, el description o el price');
         }
 
         const products = await this.getAllProducts();
         const id = products.length ? Math.max(...products.map(p => p.id)) + 1 : 1;
         
-        const newProduct = { id, title, description, price, status, };
+        const newProduct = { id, title, description, price, status, stock, code, thumbnails };
         products.push(newProduct);
 
         await fs.promises.writeFile(this.path, JSON.stringify(products, null, 2));
@@ -71,7 +74,7 @@ class ProductManager {
         try {
             const id = Number(productId);
             const products = await this.getAllProducts();
-            const newArray = products.filter((prod) => prod.id !== id);
+            const newArray = products.filter((p) => p.id !== id);
 
             if (newArray.length === products.length) throw new Error('Product not found');
 
@@ -92,6 +95,7 @@ class ProductManager {
         }
     }
 }
+
 export const productManager = new ProductManager(path.join(process.cwd(), "src/data/products.json"));
 
 

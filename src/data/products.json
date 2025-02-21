@@ -9,7 +9,7 @@
     "stock": 25,
     "category": "Perifericos",
     "thumbnails": [
-      "img-mouse.jpg"
+      "https://resource.logitechg.com/w_80,h_50,c_limit,q_auto,f_auto,dpr_2.0/d_transparent.gif/content/dam/gaming/en/non-braid/hyjal-g502-hero/g502-hero-gallery-2-nb.png?v=1%202x,%20https://resource.logitechg.com/w_80,h_50,c_limit,q_auto,f_auto,dpr_1.0/d_transparent.gif/content/dam/gaming/en/non-braid/hyjal-g502-hero/g502-hero-gallery-2-nb.png?v=1%201x"
     ]
   },
   {
@@ -22,7 +22,7 @@
     "stock": 20,
     "category": "Perifericos",
     "thumbnails": [
-      "img-teclado.jpg"
+      "https://dlcdnwebimgs.asus.com/gain/BAFE7313-074F-49E3-A08E-153337F3D71A/w1000/h732"
     ]
   },
   {
@@ -35,7 +35,21 @@
     "stock": 5,
     "category": "Accessories",
     "thumbnails": [
-      "img-monitor.jpg"
+      "https://dlcdnwebimgs.asus.com/gain/BAFE7313-074F-49E3-A08E-153337F3D71A/w1000/h732"
     ]
+  },
+  {
+    "id": 4,
+    "title": "hh",
+    "description": "dd",
+    "price": "2",
+    "status": true
+  },
+  {
+    "id": 5,
+    "title": "1",
+    "description": "23",
+    "price": "3",
+    "status": true
   }
 ]
