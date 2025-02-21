@@ -1,30 +1,21 @@
 <div id="forms-container">
     <div id="containerAddProduct">
-    <form action="http://localhost:8080/api/products" method="POST">
-        <label for="title">Nombre del producto</label>
-        <input type="text" id="title" name="title" required><br><br>
+        <form action="http://localhost:8080/api/products" method="POST">
+            <input id="productTitle" type="text" placeholder="Nombre del producto" >
+            <input id="description" type="text" placeholder="Descripcion del producto">
+            <input id="price" type="number" placeholder="Precio del producto">
 
-        <label for="description">Descripcion del producto</label>
-        <textarea id="description" name="description" rows="1" required></textarea><br><br>
-        
-        <label for="price">Precio del producto</label>
-        <input type="number" id="price" name="price" required><br><br>
-
-        <button id="addProduct" type="submit">Postear</button>
-    </form>
+            <button id="button-addProduct" type="submit">Postear</button>
+        </form>
     </div>
     <div id="containerDeleteProduct">
-    <form>
-        <label for="NumeroProducto">Id del producto</label>
-        <input type="number" id="NumeroProducto" name="NumeroProducto" required><br><br>
-        <button id="deleteProduct" type="submit">Borrar</button>
-    </form>
+        <form id="delete-Product">
+            <input id="input-deleteProduct" type="number" placeholder="ID del producto">
+            <button id="button-deleteProduct" type="submit">Borrar</button>
+        </form>
     </div>
 </div>    
-
 <div id="products-container"></div>
-
-
 
 <script src="/socket.io/socket.io.js"></script>
 <script src="js/home.js"></script>

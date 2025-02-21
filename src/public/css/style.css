@@ -11,6 +11,10 @@ form{
     border-radius: 16px;
 }
 
+input{
+    margin: 1.5rem 5px;
+}
+
 button{
     margin-left: 40%;
     padding: 5px 10px;

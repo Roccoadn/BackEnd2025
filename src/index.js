@@ -24,13 +24,20 @@ app.use ('/api/products/', productsRoutes);
 
 webSocketServer.on('connection', (socket) => {
   console.log('Nuevo dispositivo conectado!, ID:', socket.id)
+    const loadProducts = productManager.getAllProducts()
 
-    socket.on('newProduct', async (product) => {
-        await productManager.addProduct(product);
+    socket.emit('realTimeProducts', loadProducts)
+    socket.emit('home', loadProducts)
+
+    socket.on('newProduct', (title, description, price ) => {
+        productManager.addProduct(title, description, price);
+        webSocketServer.emit('realTimeProducts', loadProducts);
     });
 
-    socket.on('deleteProduct', async (productId) => {
-        await productManager.deleteProduct(productId);
+    socket.on('deleteProduct', (productId) => {
+        productManager.deleteProduct(productId);
+        webSocketServer.emit('realTimeProducts', loadProducts);
+
     });
 });
 

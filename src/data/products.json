@@ -40,16 +40,9 @@
   },
   {
     "id": 4,
-    "title": "hh",
-    "description": "dd",
-    "price": "2",
-    "status": true
-  },
-  {
-    "id": 5,
-    "title": "1",
-    "description": "23",
-    "price": "3",
+    "title": "PRODUCTO A BORRAR",
+    "description": "ABC",
+    "price": "123",
     "status": true
   }
 ]
