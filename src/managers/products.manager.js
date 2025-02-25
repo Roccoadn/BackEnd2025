@@ -14,7 +14,7 @@ class ProductManager {
         else return [];
     }
 
-    async getProductById(productId) {
+    async getProductById({productId}) {
         const products = await this.getAllProducts();
         const id = Number(productId);
         const product = products.find(p => p.id === id);

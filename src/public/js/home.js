@@ -1,35 +1,45 @@
 const socketClient = io();
 
-fetch('http://localhost:8080/api/products')
-.then(data => {return data.json()})
-.then(res =>{
-    const container = document.querySelector('#products-container')
-    res.forEach(product => {
-        const div = document.createElement('div')
-        div.setAttribute('id', `product-card`);
+function renderProducts(products) {
+    const container = document.querySelector('#products-container');
+    container.innerHTML = '';
+    products.forEach(product => {
+        const div = document.createElement('div');
+        div.classList.add('product-card');
         div.innerHTML = `
         <img src="${product.thumbnails}" alt="${product.title}">
-        <h1>${product.title}</h1>
-        <p>${product.description}</p>
-        <h2>${product.price}</h2>
-        `
-        container.appendChild(div)    
-    })
+            <h1>${product.title}</h1>
+            <p>${product.description}</p>
+            <h2>${product.price}</h2>    
+        `;
+        container.appendChild(div);
+    });
+}
+
+socketClient.on ('realTimeProducts', (products) => {
+    renderProducts(products);
 })
 
-const title = document.querySelector('#productTitle');
-const description = document.querySelector('#description');
-const price = document.querySelector('#price');
-const productId = document.querySelector('#input-deleteProduct').value;
+document.querySelector('#add-form').addEventListener('submit', (event) => {
+    event.preventDefault();
 
-document.querySelector('#button-addProduct').addEventListener('submit', (event) => {
-    event.preventDefault()
-    socketClient.emit('newProduct', {title, description, price});
+    const title = document.querySelector('#productTitle').value;
+    const description = document.querySelector('#description').value;
+    const price = document.querySelector('#price').value;
+
+    socketClient.emit('newProduct', { title, description, price });
+
+    document.querySelector('#productTitle').value = "";
+    document.querySelector('#description').value = "";
+    document.querySelector('#price').value = "";
 });
 
-document.querySelector('#button-deleteProduct').addEventListener('submit', (event) => {
-    event.preventDefault()
-    socketClient.emit('deleteProduct', {productId})
-});
+document.querySelector('#delete-form').addEventListener('submit', (event) => {
+    event.preventDefault();
+    const productId = document.querySelector('#input-deleteProduct').value;
 
+    socketClient.emit('deleteProduct', { productId });
+
+    document.querySelector('#input-deleteProduct').value = "";
+});
  

@@ -46,7 +46,7 @@ button:hover{
     }
 }
 
-#product-card{
+.product-card{
     text-align: center;
     border-radius: 16px;
     padding: 3rem;
