@@ -10,13 +10,6 @@
     right: 20px;
     position: absolute;
     z-index: +1;
-    background-color: #ffff;
-}
-
-#cart-button:hover{
-    background-color: #FFE600;
-    color: aliceblue;
-    transition: all 5ms;
 }
 
 #cart-container{
@@ -41,16 +34,6 @@
     display: none;
 }
 
-a{
-    color: #080808;
-}   
-.logo-conainer{
-    display: flex;
-}
-span{
-    font-size: 1.5rem;
-    font-weight:900;
-}
 nav{
     z-index: +1000;
     display: flex;
@@ -63,8 +46,15 @@ nav{
         text-decoration: none;
         color: #080808;
     }
+    .logo-conainer{
+        display: flex;
+    }
     img{
         height: 35px;
+    }
+    span{
+        font-size: 1.5rem;
+        font-weight:900;
     }
 }
 button{
@@ -81,45 +71,33 @@ button:hover{
     color: #080808;
     transition: all 1s;
 }
-#forms-container{
-    padding: 3rem;
+
+#detail-container{
+    padding-top: 5rem;
     display: flex;
     justify-content: space-around;
-    background-color: #080808;
-    
-}
-
-#products-container{
-    margin: 3rem;
-    display: grid;
-    grid-template-columns: 1fr 1fr 1fr;
-    row-gap: 1.5rem;
-    column-gap: 20px;
-    h2{
-        color: #2b702b;
-    }
-}
-
-.product-card{
-    display: flex;
-    flex-direction: column;
-    row-gap: 15px;
-    justify-items: center;
-    text-align: center;
-    border-radius: 16px;
-    padding: 3rem;
-    border: 0.5px gray;
-    box-shadow: 10px 10px 78px -37px rgba(0,0,0,0.75);
     img{
-        width: 150px;
-        margin-left: auto;
-        margin-right: auto;
+        height: 350px;
+    }
+    #detail-info{
+        padding: 2rem;
+        display: flex;
+        flex-direction: column;
+        row-gap: 15px;
+        #price-container{
+            color: green;
+            font-size: larger;
+            font-weight: bold;
+            margin-left: 20px;
+        }
     }
 }
+#back-to-home{
+    color: #080808;
+    margin-left: 45%;
+    margin-bottom: 2rem;
+}   
 
-.pagination{
-    display: flex;
-    justify-content: center;
-    margin-bottom: 3rem;
+#back-to-home:hover{
+    text-decoration: none;
 }
-

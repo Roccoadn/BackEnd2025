@@ -1,65 +1,87 @@
 import { Router } from "express";  
-import { productManager } from "../managers/products.manager.js";
+import { upload } from "../utils.js";
+import __dirname from "../utils.js";
+import productsSchema from "../models/products.model.js";
+import path from 'path';
 
 const router = Router(); 
 
-router.delete('/:productId', async (req, res) => {
-    try {
-        const product = await productManager.deleteProduct(req.params.productId);
-        res.status(200).json(product);
-    } catch (error) {
-        res.status(404).json({ error: error.message });
-    }
-});
+router.post('/', upload.single('thumbnail'), async (req, res) => {
+    if (!req.file) res.status(400).json({error: 'No se subio ningun archivo'});
+    
+    const product = req.body;
+    const result = await productsSchema.create({
+        ...product, 
+        thumbnail: path.resolve(__dirname + '/public/img', req.file.filename)
+    });
 
-router.delete('/', async (req, res) => {   
-    try {
-        await productManager.deleteAllProducts();
-        res.status(200).json({ message: 'All products have been deleted' });
-    } catch (error) {
-        res.status(404).json({ error: error.message });
-    }
-});
-
-router.post('/', async (req, res) => {
-    try {
-        const product = await productManager.addProduct(req.body);
-        res.status(201).json(product);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-});
-
-router.put ('/:productId', async (req, res) => {
-try {
-    const { productId } = req.params;
-    const updatedProduct = await productManager.updateProduct(productId, req.body);
-    res.status(200).json(updatedProduct);
-} catch (error) {
-        res.status(400).json({ error: error.message });
-    }
-});
-
-router.get('/:productId', async (req, res) => {
-    try {
-        const { id } = req.params;
-        const product = await productManager.getProductById(id);
-        res.json(product);
-    } catch (error) {
-        res.status(404).json({ error: error.message });
-    }
+    res.status(201).json({ payload: result});
 });
 
 router.get('/', async (req, res) => {
-    try {
-        const { limit } = req.query;
-        const products = await productManager.getAllProducts(limit);
-        res.status(200).json(products);
-    } catch (error) {
-        res.status(400).json({ error: error.message });
+    const { limit = 6, page = 1, sort = '', ...query } = req.query;
+    const sortProducts = {
+        'precio mas bajo primero': 1,
+        'precio mas alto primero': -1
     }
+
+    const product = await productsSchema.paginate(
+        { ...query },
+        {
+            limit,
+            page,
+            ...(sort && { sort: { price: sortProducts[sort] } }),
+            customLabels: { docs: 'payload'}
+        }
+    );
+    res.status(200).json({ ...product });
 });
 
+router.get("/:id", async (req, res) => {
+    const { id } = req.params;
+    const productFindedById = await productsSchema.findById(id);
+    
+    if (!productFindedById) return res.status(404).json({ message: "Product not found" });
 
+    res.status(201).json({ payload: productFindedById });
+  });
+  
+router.put("/:id", upload.single("thumbnail"), async (req, res) => {
+    const { body, params } = req;
+    const { id } = params;
+    const product = body;
+    const productUpdated = await productsSchema.findByIdAndUpdate(id, {
+      ...product,
+      ...(req?.file?.path && { thumbnail: req.file.path }),
+    }, { new: true });
+  
+    res.status(201).json({ message: "Producto actualizado con exito", payload: productUpdated });
+  });
+  
+router.delete("/:id", async (req, res) => {
+    const { id } = req.params;
+    const productDeleted = await productsSchema.findByIdAndDelete(id);
+
+    if (!productDeleted) return res.status(404).json({ message: "Producto no encontrado" });
+  
+    res.status(201).json({ payload: productDeleted });
+  });
+
+router.get('/productsDetail/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    if (!id) {
+      return res.status(400).send("Error: No se proporcionó un ID de producto.");
+    }
+    const product = await productsSchema.findById(id).lean();
+    if (!product) {
+      return res.status(404).send("Producto no encontrado.");
+    }
+    res.render('productsDetail', { product });
+  
+  } catch (error) {
+    res.status(500).send("Error al obtener el producto aca");
+  }
+});
 
 export default router;

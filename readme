@@ -1,0 +1,8 @@
+- metodo DELETE en api/carts/:cid/products/:pid []
+
+- metodo PUT en api/carts/:cid []
+
+- metodo PUT en api/carts/:cid/products/:pid []
+
+- metodo DELETE en api/carts/:cid 
+
