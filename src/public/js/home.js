@@ -83,10 +83,17 @@ document.addEventListener('DOMContentLoaded', () => {
                             <h3>${item.product.title}</h3>
                             <p>Cantidad: ${item.quantity}</p>
                             <p>Precio: $${item.product.price}</p>
+                            <button class="remove-product" data-id="${item.product._id}">Eliminar</button>
                         </div>
                     `).join("");
                 
                 cartContainer.classList.toggle("hidden");
+                document.querySelectorAll(".remove-product").forEach(button => {
+                    button.addEventListener("click", async (event) => {
+                        const productId = event.target.dataset.id;
+                        await removeProductFromCart(productId);
+                    });
+                });
             }
         } catch (error) {
             console.error("Error al cargar el carrito:", error);
@@ -94,6 +101,18 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
+async function removeProductFromCart(productId) {
+    try {
+        const response = await fetch(`/api/carts/67ca2b7d13c9804b87109f34/products/${productId}`, {
+            method: "DELETE"
+        });
+        if (!response.ok) throw new Error("Error al eliminar el producto");
+        document.getElementById("cart-button").click();
+    }
+    catch (error) {
+        console.error("Error al eliminar el producto:", error);
+    }
+}
 
 document.addEventListener("DOMContentLoaded", () => {
     getProducts(currentPage);
