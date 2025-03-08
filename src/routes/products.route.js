@@ -19,22 +19,27 @@ router.post('/', upload.single('thumbnail'), async (req, res) => {
 });
 
 router.get('/', async (req, res) => {
+  try {
     const { limit = 6, page = 1, sort = '', ...query } = req.query;
-    const sortProducts = {
-        'precio mas bajo primero': 1,
-        'precio mas alto primero': -1
-    }
-
-    const product = await productsSchema.paginate(
-        { ...query },
-        {
-            limit,
-            page,
-            ...(sort && { sort: { price: sortProducts[sort] } }),
-            customLabels: { docs: 'payload'}
-        }
+    const sortOptions = {
+      asc: { price: 1 },
+      desc: { price: -1 }
+    };
+    const products = await productsSchema.paginate(
+    { ...query },
+      {
+        limit: parseInt(limit),
+        page: parseInt(page),
+        sort: sortOptions[sort] || {},
+        customLabels: { docs: 'payload' }
+      }
     );
-    res.status(200).json({ ...product });
+    res.status(200).json({ ...products });
+  } 
+  catch (error) {
+    console.error("Error al obtener productos:", error);
+    res.status(500).json({ message: "Error en el servidor" });
+  }
 });
 
 router.get("/:id", async (req, res) => {

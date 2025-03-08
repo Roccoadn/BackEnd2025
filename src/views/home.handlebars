@@ -4,11 +4,25 @@
         <span>Mercadito DB</span>
     </a>
     <div>
-        <button id="cart-button">🛒{{product.quantity}}​</button>
+        <button id="cart-button"><i class="fa-solid fa-cart-shopping fa-xl" style="color: #000000;"></i></button>
     </div>
 </nav>
 
-<div id="cart-container" class="hidden"></div>
+<div id="cart-container" class="hidden">
+    <h2>Carrito de Compras</h2>
+    <div id="cart-items"></div>
+    <p>Total: $<span id="cart-total">0</span></p>
+    <button id="clear-cart">Vaciar Carrito</button>
+</div>
+
+<div id="select-container">
+    <label for="sort-select">Ordenar por:</label>
+    <select id="sort-select">
+        <option value="">Sin orden</option>
+        <option value="asc">Precio más bajo primero</option>
+        <option value="desc">Precio más alto primero</option>
+    </select>
+</div>
 
 <div id="products-container"></div>
 

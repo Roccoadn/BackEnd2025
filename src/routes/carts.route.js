@@ -73,30 +73,42 @@ router.put('/:cid', async (req, res) => {
 });
 
 router.put('/:cid/products/:pid', async (req, res) => {
-    const { cid, pid } = req.params;
-    const { quantity } = req.body;
-    const cartFindedById = await cartsSchema.findById(cid).lean();
-    if (!cartFindedById) {
-        return res.status(404).json({ message: 'Carrito no encontrado' });
+    try {
+        const { cid, pid } = req.params;
+        const { quantity, action } = req.body;
+
+        const cart = await cartsSchema.findById(cid);
+        if (!cart) {
+            return res.status(404).json({ message: 'Carrito no encontrado' });
+        }
+        const productIndex = cart.products.findIndex(prod => prod.product.toString() === pid);
+        if (productIndex === -1) {
+            return res.status(404).json({ message: 'Producto no encontrado en el carrito' });
+        }
+        if (action === "decrease") {
+            if (cart.products[productIndex].quantity > 1) {
+                cart.products[productIndex].quantity -= 1;
+            } else {
+                cart.products.splice(productIndex, 1);
+            }
+        } else if (quantity !== undefined) {
+            cart.products[productIndex].quantity = quantity;
+        }
+
+        const cartUpdated = await cartsSchema.findByIdAndUpdate(
+            cid,
+            { products: cart.products },
+            { new: true }
+        ).populate('products.product');
+
+        res.status(200).json({ message: 'Cantidad de productos actualizada', cart: cartUpdated });
+    }   
+    catch (error) {
+        console.error(error);
+        return res.status(500).json({ message: 'Error interno del servidor al actualizar el producto' });
     }
-    const productI = cartFindedById.products.findIndex(prod => prod.product.toString() === pid);
-    if (productI === -1) {
-        return res.status(404).json({ message: 'Producto no encontrado en el carrito' });
-    }
-
-    cartFindedById.products[productI] = {
-        ...cartFindedById.products[productI],
-        quantity
-    };
-
-    const cartUpdated = await cartsSchema.findOneAndUpdate(
-        { _id: cid },
-        { products: cartFindedById.products },
-        { new: true }
-    ).populate('products.product');
-
-    res.status(201).json({ message: 'Cantidad de productos actualizada', cart: cartUpdated });
 });
+    
 
 router.delete('/:cid/products/:pid', async (req, res) => {
     const { cid, pid } = req.params;

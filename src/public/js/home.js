@@ -1,27 +1,37 @@
 import { api } from '../constants/environments.js'
-const { apiUrl, productsEndpoint, logoImage} = api;
+const { apiUrl, productsEndpoint, logoImage } = api;
 
 let currentPage = 1;
 const limit = 6;
+let currentSort = "";
 
-async function getProducts(page) {
+async function getProducts(page, sort = "") {
     try {
-        const url = `${apiUrl + productsEndpoint}?page=${page}&limit=${limit}`;
+        let url = `${apiUrl + productsEndpoint}?page=${page}&limit=${limit}`;
+        if (sort) {
+            url += `&sort=${sort}`;
+        }
+
         const response = await fetch(url);
         const data = await response.json();
 
         renderProducts(data.payload);
-    
+
         document.getElementById("pageInfo").textContent = `Página ${data.page} de ${data.totalPages}`;
         document.getElementById("prevPage").disabled = !data.hasPrevPage;
         document.getElementById("nextPage").disabled = !data.hasNextPage;
-        document.getElementById("prevPage").onclick = () => getProducts(data.prevPage);
-        document.getElementById("nextPage").onclick = () => getProducts(data.nextPage);
+        document.getElementById("prevPage").onclick = () => getProducts(data.prevPage, currentSort);
+        document.getElementById("nextPage").onclick = () => getProducts(data.nextPage, currentSort);
         currentPage = data.page;
     } catch (e) {
         console.error("Error al cargar productos:", e);
     }
 }
+
+document.getElementById("sort-select").addEventListener("change", (event) => {
+    currentSort = event.target.value;
+    getProducts(1, currentSort);
+});
 
 function renderProducts(data) {
     const container = document.querySelector('#products-container');
@@ -53,13 +63,22 @@ function renderProducts(data) {
                 });
 
                 if (response.ok) {
-                    alert('Producto agregado al carrito');
+                    Toastify({
+                        text: "Producto agregado al carrito",
+                        gravity: "bottom",
+                        duration: 1500
+                        }).showToast();
                 } else {
-                    alert('Error al agregar producto');
+                    Toastify({
+                        text: "error al agregar el producto al carrito",
+                        gravity: "bottom",
+                        duration: 1500
+                        }).showToast();
                 }
             } catch (error) {
                 console.error('Error en la solicitud:', error);
             }
+            await loadCart();
         });
         div.appendChild(addCartButton);
         container.appendChild(div);
@@ -68,52 +87,91 @@ function renderProducts(data) {
 
 document.addEventListener('DOMContentLoaded', () => {
     document.getElementById("cart-button").addEventListener("click", async () => {
-        try {
-            const response = await fetch("/api/carts/67ca2b7d13c9804b87109f34");
-            if (!response.ok) throw new Error("Error al obtener el carrito");
-            
-            const cart = await response.json();
-            const cartContainer = document.getElementById("cart-container");
+        cartContainer.classList.toggle("hidden");
+        await loadCart();
+    });
+});
 
-            if (cartContainer) {
-                cartContainer.innerHTML = cart.productList
-                    .filter(item => item.product)
-                    .map(item => `
-                        <div>
-                            <h3>${item.product.title}</h3>
-                            <p>Cantidad: ${item.quantity}</p>
-                            <p>Precio: $${item.product.price}</p>
-                            <button class="remove-product" data-id="${item.product._id}">Eliminar</button>
-                        </div>
-                    `).join("");
+async function loadCart() {
+    try {
+        const response = await fetch("/api/carts/67ca2b7d13c9804b87109f34");
+        if (!response.ok) throw new Error("Error al obtener el carrito");
+        
+        const cart = await response.json();
+        const cartContainer = document.getElementById("cart-container");
+        const cartItems = document.getElementById("cart-items");
+        const cartTotal = document.getElementById("cart-total");
+        
+        if (cartContainer) {
+            cartItems.innerHTML = "";
+            let total = 0;
+            
+            cart.productList.filter(item => item.product).forEach(item => {
+                total += item.quantity * item.product.price;
                 
+                const div = document.createElement("div");
+                div.classList.add("cart-item");
+                div.innerHTML = `
+                <h3>${item.product.title}</h3>
+                <p>Cantidad: ${item.quantity}</p>
+                <p>Precio: $${item.product.price}</p>
+                    <button class="decrease-quantity" data-id="${item.product._id}">-</button>
+                    `;
+                    cartItems.appendChild(div);
+                });
+                
+                cartTotal.textContent = total;
                 cartContainer.classList.toggle("hidden");
-                document.querySelectorAll(".remove-product").forEach(button => {
+                document.querySelectorAll(".decrease-quantity").forEach(button => {
                     button.addEventListener("click", async (event) => {
                         const productId = event.target.dataset.id;
-                        await removeProductFromCart(productId);
+                        await decreaseProductQuantity(productId);
+                        await loadCart();
                     });
+                });
+                document.getElementById("clear-cart").addEventListener("click", async () => {
+                    await clearCart();
                 });
             }
         } catch (error) {
             console.error("Error al cargar el carrito:", error);
         }
-    });
-});
+}
 
-async function removeProductFromCart(productId) {
+
+async function decreaseProductQuantity(productId) {
     try {
         const response = await fetch(`/api/carts/67ca2b7d13c9804b87109f34/products/${productId}`, {
-            method: "DELETE"
+            method: "PUT",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ action: 'decrease' })
         });
-        if (!response.ok) throw new Error("Error al eliminar el producto");
-        document.getElementById("cart-button").click();
-    }
-    catch (error) {
-        console.error("Error al eliminar el producto:", error);
+        
+        if (!response.ok) throw new Error("Error al reducir la cantidad del producto");
+        
+        await loadCart();
+    } catch (error) {
+        console.error("Error al reducir cantidad:", error);
     }
 }
 
+async function clearCart() {
+    try {
+        const response = await fetch(`/api/carts/67ca2b7d13c9804b87109f34`, {
+            method: "DELETE"
+        });
+        
+        if (!response.ok) throw new Error("Error al vaciar el carrito");
+
+        await loadCart();
+    } catch (error) {
+        console.error("Error al vaciar carrito:", error);
+    }
+}
+
+
+
 document.addEventListener("DOMContentLoaded", () => {
     getProducts(currentPage);
+    loadCart();
 });
